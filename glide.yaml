@@ -1,0 +1,6 @@
+package: github.com/themecloud/heimdall
+import:
+- package: github.com/urfave/cli
+- package: github.com/mattbaird/gochimp
+- package: bitbucket.org/chrj/smtpd
+- package: github.com/bsm/ratelimit
