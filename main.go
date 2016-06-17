@@ -14,29 +14,22 @@ import (
 )
 
 var (
-	Name      = "Heimdall"
-	Version   = "0.0.0"
-	APIKEY    string
-	Rate      *ratelimit.RateLimiter
-	RateLimit int
+	Name    = "Heimdall"
+	Version = "0.0.0"
+
+	APIKEY      string
+	MandrillAPI *gochimp.MandrillAPI
+	Rate        *ratelimit.RateLimiter
+	RateLimit   int
 )
 
-func mailHandler(_ smtpd.Peer, env smtpd.Envelope) error {
-	if _, err := mail.ReadMessage(bytes.NewReader(env.Data)); err != nil {
-		return err
+func mailHandler(_ smtpd.Peer, env smtpd.Envelope) (err error) {
+	if _, err = mail.ReadMessage(bytes.NewReader(env.Data)); err != nil {
+		return
 	}
 
-	mandrillAPI, err := gochimp.NewMandrill(APIKEY)
-
-	_, err = mandrillAPI.MessageSendRaw(string(env.Data), env.Recipients, gochimp.Recipient{Email: env.Sender}, false)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func init() {
-	Rate = ratelimit.New(RateLimit, time.Minute)
+	_, err = MandrillAPI.MessageSendRaw(string(env.Data), env.Recipients, gochimp.Recipient{Email: env.Sender}, false)
+	return
 }
 
 func main() {
@@ -78,11 +71,15 @@ func main() {
 	app.Run(os.Args)
 }
 
-func serve(c *cli.Context) error {
+func serve(c *cli.Context) (err error) {
+	Rate = ratelimit.New(RateLimit, time.Minute)
+
+	if MandrillAPI, err = gochimp.NewMandrill(APIKEY); err != nil {
+		return err
+	}
+
 	server := &smtpd.Server{
-
-		WelcomeMessage: "Heimdall SMTP Server",
-
+		WelcomeMessage:    "Heimdall SMTP Server",
 		Handler:           mailHandler,
 		ConnectionChecker: rateLimit,
 	}
