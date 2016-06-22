@@ -3,5 +3,8 @@ import:
 - package: github.com/urfave/cli
 - package: github.com/mattbaird/gochimp
 - package: bitbucket.org/chrj/smtpd
-- package: github.com/lysu/go-rate-limiter
 - package: github.com/Sirupsen/logrus
+- package: github.com/abo/rerate
+- package: github.com/garyburd/redigo
+  subpackages:
+  - redis

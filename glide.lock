@@ -1,29 +1,23 @@
-hash: f80d1e6927d7d3b020a693864c6a76eaf5b7aae9cce9753863256f9c94ff51af
-updated: 2016-06-21T16:48:07.4394+02:00
+hash: a5e328b9c0f06d0f6935f5a65aa831fcc01a6a8a2b07bf8cbd693ed667f33fa1
+updated: 2016-06-22T17:01:47.977494+02:00
 imports:
 - name: bitbucket.org/chrj/smtpd
   version: ""
+- name: github.com/abo/rerate
+  version: b3261b26e05ab7ffa3988cc5f2bbf61b0a8b0296
 - name: github.com/garyburd/redigo
-  version: 66a21c47c45f96f58bb99efadde6fe1dbf6e2beb
+  version: 828ffaf3a87ccd29ee3feeca61b7c06641d58687
   subpackages:
   - redis
   - internal
-- name: github.com/lysu/go-rate-limiter
-  version: 66a21c47c45f96f58bb99efadde6fe1dbf6e2beb
 - name: github.com/mattbaird/gochimp
-  version: 66a21c47c45f96f58bb99efadde6fe1dbf6e2beb
+  version: 828ffaf3a87ccd29ee3feeca61b7c06641d58687
 - name: github.com/Sirupsen/logrus
-  version: 66a21c47c45f96f58bb99efadde6fe1dbf6e2beb
+  version: 828ffaf3a87ccd29ee3feeca61b7c06641d58687
 - name: github.com/urfave/cli
-  version: 66a21c47c45f96f58bb99efadde6fe1dbf6e2beb
-- name: github.com/wunderlist/ttlcache
-  version: 66a21c47c45f96f58bb99efadde6fe1dbf6e2beb
-- name: golang.org/x/net
-  version: 66a21c47c45f96f58bb99efadde6fe1dbf6e2beb
-  subpackages:
-  - context
+  version: 828ffaf3a87ccd29ee3feeca61b7c06641d58687
 - name: golang.org/x/sys
-  version: 66a21c47c45f96f58bb99efadde6fe1dbf6e2beb
+  version: 828ffaf3a87ccd29ee3feeca61b7c06641d58687
   subpackages:
   - unix
 devImports: []
