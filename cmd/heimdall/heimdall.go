@@ -4,10 +4,12 @@ import (
 	"os"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
-	//limiter "github.com/lysu/go-rate-limiter"
-	"github.com/abo/rerate"
+	"github.com/themecloud/heimdall/config"
+	"github.com/themecloud/heimdall/redis"
+	"github.com/themecloud/heimdall/smtpd"
 
+	log "github.com/Sirupsen/logrus"
+	"github.com/abo/rerate"
 	"github.com/urfave/cli"
 )
 
@@ -40,6 +42,9 @@ func main() {
 			Name:  "listen, l",
 			Usage: "Address to listen",
 			Value: "127.0.0.1:25",
+		},
+		cli.StringFlag{
+			Name: "output",
 		},
 		cli.StringFlag{
 			Name:   "apikey, mandrill-key, mk",
@@ -78,12 +83,14 @@ func heimdallBefore(c *cli.Context) error {
 	if c.Bool("verbose") {
 		log.SetLevel(log.DebugLevel)
 	}
-
-	redisPool = newPool(c.String("redis"), c.String("redis-password"))
 	return nil
 }
 
 func serve(c *cli.Context) error {
+
+	redisPool := redis.NewPool(c.String("redis"), c.String("redis-password"))
+
+	config := config.NewConfig(c.String("output"))
 
 	log.WithFields(log.Fields{
 		"limit": rateSendLimit,
@@ -97,7 +104,7 @@ func serve(c *cli.Context) error {
 	}).Debug("rateLimit spam")
 	spamLimiter := rerate.NewLimiter(redisPool, name+":rateSpam", rateSpamTime, time.Minute, int64(rateSpamLimit))
 
-	server, err := newSMTP(c.String("apikey"), sendLimiter, spamLimiter)
+	server, err := smtpd.NewSMTP(config, sendLimiter, spamLimiter)
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}

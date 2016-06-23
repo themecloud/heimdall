@@ -1,21 +1,18 @@
-package main
+package redis
 
 import (
 	"time"
 
-	"github.com/garyburd/redigo/redis"
+	redigo "github.com/garyburd/redigo/redis"
 )
 
-var (
-	redisPool *redis.Pool
-)
-
-func newPool(server, password string) *redis.Pool {
-	return &redis.Pool{
+// TODO
+func NewPool(server, password string) *redigo.Pool {
+	return &redigo.Pool{
 		MaxIdle:     3,
 		IdleTimeout: 240 * time.Second,
-		Dial: func() (redis.Conn, error) {
-			c, err := redis.Dial("tcp", server)
+		Dial: func() (redigo.Conn, error) {
+			c, err := redigo.Dial("tcp", server)
 			if err != nil {
 				return nil, err
 			}
@@ -27,7 +24,7 @@ func newPool(server, password string) *redis.Pool {
 			}
 			return c, nil
 		},
-		TestOnBorrow: func(c redis.Conn, t time.Time) error {
+		TestOnBorrow: func(c redigo.Conn, t time.Time) error {
 			_, err := c.Do("PING")
 			return err
 		},
