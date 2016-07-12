@@ -8,7 +8,22 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/abo/rerate"
 	"github.com/mattbaird/gochimp"
+
+	"github.com/themecloud/heimdall"
+	"github.com/themecloud/heimdall/outputs"
 )
+
+type Mandrill struct {
+	API string
+}
+
+func (m *Mandrill) Description() string {
+	return "Configuration for Mandrill service"
+}
+
+func (m *Mandrill) Send(mails heimdall.Mails) error {
+	return nil
+}
 
 func MakeMailHandler(mandrillAPI *gochimp.MandrillAPI, sendLimiter *rerate.Limiter, spamLimiter *rerate.Limiter) func(smtpd.Peer, smtpd.Envelope) error {
 	return func(peer smtpd.Peer, env smtpd.Envelope) error {
@@ -44,29 +59,8 @@ func MakeMailHandler(mandrillAPI *gochimp.MandrillAPI, sendLimiter *rerate.Limit
 	}
 }
 
-func MakeHeloChecker(sendLimiter *rerate.Limiter, spamLimiter *rerate.Limiter) func(smtpd.Peer, string) error {
-	return func(peer smtpd.Peer, heloName string) error {
-		if err := sendLimiter.Inc(heloName); err != nil {
-			log.WithFields(log.Fields{
-				"heloName": heloName,
-				"error":    err,
-			}).Warn("Can't increment send")
-		}
-
-		if exc, _ := sendLimiter.Exceeded(heloName); exc {
-			log.WithFields(log.Fields{
-				"rateLimit": "send",
-				"peer":      peer,
-			}).Warn("rateLimit exceeded")
-			return smtpd.Error{Code: 451, Message: "Rate Limit exceeded"}
-		}
-		if exc, _ := spamLimiter.Exceeded(heloName); exc {
-			log.WithFields(log.Fields{
-				"rateLimit": "spam",
-				"peer":      peer,
-			}).Warn("rateLimit exceeded")
-			return smtpd.Error{Code: 451, Message: "Rate Limit exceeded"}
-		}
-		return nil
-	}
+func init() {
+	outputs.Add("mandrill", func() heimdall.Output {
+		return &Mandrill{}
+	})
 }

@@ -93,6 +93,10 @@ func serve(c *cli.Context) error {
 	config := config.NewConfig(c.String("output"))
 
 	log.WithFields(log.Fields{
+		"config": config,
+	}).Debug("Configuration generated")
+
+	log.WithFields(log.Fields{
 		"limit": rateSendLimit,
 		"time":  rateSendTime,
 	}).Debug("rateLimit send")
